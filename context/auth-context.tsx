@@ -23,19 +23,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock login - in real app, this would call an API
-    if (email === "admin@uryusee.com" && password === "admin123") {
-      setUser({
-        id: "1",
-        email: "admin@uryusee.com",
-        name: "Admin User",
-        role: "admin",
-      })
+    // Test credentials for different roles
+    const testUsers: Record<string, { password: string; user: User }> = {
+      "admin@uryusee.com": {
+        password: "admin123",
+        user: {
+          id: "1",
+          email: "admin@uryusee.com",
+          name: "Admin User",
+          role: "admin",
+        },
+      },
+      "staff@uryusee.com": {
+        password: "staff123",
+        user: {
+          id: "2",
+          email: "staff@uryusee.com",
+          name: "Staff Member",
+          role: "cashier",
+        },
+      },
+      "customer@uryusee.com": {
+        password: "customer123",
+        user: {
+          id: "3",
+          email: "customer@uryusee.com",
+          name: "Test Customer",
+          role: "customer",
+        },
+      },
+    }
+
+    const testUser = testUsers[email]
+    if (testUser && testUser.password === password) {
+      setUser(testUser.user)
       return true
     }
-    if (email && password) {
+
+    // Allow any email/password for demo customer registration
+    if (email && password && password.length >= 6) {
       setUser({
-        id: "2",
+        id: Date.now().toString(),
         email,
         name: email.split("@")[0],
         role: "customer",
